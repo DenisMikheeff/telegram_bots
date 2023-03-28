@@ -55,7 +55,7 @@ def handle_q2(update, context):
         update.message.reply_text("text3")
 
 def main():
-    updater = Updater("YOUR_TOKEN", use_context=True)
+    updater = Updater("5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE", use_context=True)
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
