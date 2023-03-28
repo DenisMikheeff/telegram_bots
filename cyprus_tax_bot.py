@@ -13,6 +13,8 @@ def handle_integer(update, context):
     s = context.user_data.get('s')
     try:
         int_s = int(s)
+        print(s)
+        print(int_s)
         if int_s >= 1:
             return "q1"
         else:
