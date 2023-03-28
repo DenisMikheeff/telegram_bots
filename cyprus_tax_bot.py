@@ -1,3 +1,4 @@
+import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 def start(update, context):
@@ -55,6 +56,7 @@ def handle_q2(update, context):
         update.message.reply_text("text3")
 
 def main():
+    PORT = int(os.environ.get("PORT", 5000))
     updater = Updater("5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE", use_context=True)
     dp = updater.dispatcher
 
@@ -66,6 +68,8 @@ def main():
     dp.add_handler(MessageHandler(Filters.regex("(?i)yes|no"), handle_q1))
     dp.add_handler(MessageHandler(Filters.regex("(?i)yes|no"), handle_q2))
 
+    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path="5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE")
+    updater.bot.set_webhook("https://cyprus-tax-bot.herokuapp.com/5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE")
     updater.start_polling()
     updater.idle()
 
