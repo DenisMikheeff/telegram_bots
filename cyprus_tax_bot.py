@@ -1,3 +1,4 @@
+import telegram
 import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
@@ -56,7 +57,7 @@ def handle_q2(update, context):
         update.message.reply_text("text3")
 
 def main():
-    PORT = int(os.environ.get("PORT", 5000))
+    PORT = int(os.environ.get("PORT", 8443))
     updater = Updater("5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE", use_context=True)
     dp = updater.dispatcher
 
