@@ -11,8 +11,15 @@ def handle_message(update, context):
         int_s = int(text)
         context.user_data['s'] = int_s
         update.message.reply_text("Got it, your integer input is {}.".format(int_s))
+        if int_s >= 1:
+            update.message.reply_text("Question 1: What is your favorite color?")
+            return "q1"
+        else:
+            update.message.reply_text("Question 2: What is your favorite animal?")
+            return "q2"
     except ValueError:
         update.message.reply_text("Oops, please enter a valid integer.")
+        return "start"
 
 # Define a function to start the bot
 def start(update, context):
@@ -20,15 +27,18 @@ def start(update, context):
 
 # Define the integer handler function
 def handle_integer(update, context):
-    int_s = context.user_data.get('s')
-    if int_s is None:
-        # 's' is not in user data, so we need to ask for an integer first
-        update.message.reply_text("Please enter an integer.")
+    try:
+        int_s = int(update.message.text)
+        context.user_data['s'] = int_s
+        if int_s >= 1:
+            update.message.reply_text("Question 1: What is your favorite color?")
+            return "q1"
+        else:
+            update.message.reply_text("Question 2: What is your favorite animal?")
+            return "q2"
+    except ValueError:
+        update.message.reply_text("Invalid input. Please enter an integer.")
         return "start"
-    elif int_s >= 1:
-        return "q1"
-    else:
-        return "q2"
 
 # Define the first question handler function
 def handle_q1(update, context):
