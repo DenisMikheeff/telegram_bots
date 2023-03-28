@@ -6,7 +6,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Conve
 def start(update, context):
     update.message.reply_text("Please enter an integer")
     try:
-        int_s = int(update.message.text)
+        int_s = int(update.message.text.split()[-1])
         context.user_data['s'] = int_s
         update.message.reply_text("Got it, your integer input is {}.".format(int_s))
     except ValueError:
