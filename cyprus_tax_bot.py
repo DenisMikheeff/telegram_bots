@@ -5,12 +5,12 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Conve
 # Define the start function
 def start(update, context):
     update.message.reply_text("Please enter an integer")
+    s = int(update.message.text)
     return "integer"
 
 # Define the integer handler function
 def handle_integer(update, context):
     try:
-        s = int(update.message.text)
         if s >= 1:
             return "q1"
         else:
