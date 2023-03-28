@@ -72,7 +72,6 @@ def cancel(update, context):
 conv_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)],
     states={
-        "integer": [MessageHandler(Filters.text & ~Filters.command, handle_integer)],
         "q1": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q1)],
         "q2": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q2)],
     },
