@@ -12,6 +12,7 @@ def start(update, context):
 def handle_integer(update, context):
     s = context.user_data.get('s')
     try:
+        s = int(s)
         if s >= 1:
             return "q1"
         else:
