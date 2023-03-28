@@ -2,63 +2,92 @@ import telegram
 import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 
+# Define the start function
 def start(update, context):
-    update.message.reply_text("Please enter an integer:")
+    update.message.reply_text("Please enter an integer")
+
     return "integer"
 
+# Define the integer handler function
 def handle_integer(update, context):
     try:
         s = int(update.message.text)
+        context.user_data["s"] = s
+
         if s >= 1:
-            context.user_data["q1"] = True
-            update.message.reply_text("Great! Here's your first question: ...")
-            return "q1"
+            return handle_q1(update, context)
         else:
-            context.user_data["q2"] = True
-            update.message.reply_text("Okay, let's move on to the next question: ...")
-            return "q2"
+            return handle_q2(update, context)
     except ValueError:
         update.message.reply_text("Invalid input. Please enter an integer.")
         return "integer"
 
+# Define the first question handler function
 def handle_q1(update, context):
+    update.message.reply_text("Great! Here's your first question: [Yes/No] ...")
+
+    return "q1"
+
+# Define the second question handler function
+def handle_q2(update, context):
+    update.message.reply_text("Okay, let's move on to the next question: [Yes/No] ...")
+
+    return "q2"
+
+# Define the answer handler function for the first question
+def handle_q1_answer(update, context):
     answer = update.message.text.lower()
+
     if answer == "yes":
         context.user_data["e"] = 50
-        update.message.reply_text("Answer saved. Thank you.")
-        return ConversationHandler.END
     elif answer == "no":
         context.user_data["e"] = 0
-        update.message.reply_text("Answer saved. Thank you.")
-        return ConversationHandler.END
     else:
         update.message.reply_text("Invalid answer. Please enter 'Yes' or 'No'.")
         return "q1"
 
-def handle_q2(update, context):
+    return handle_text(update, context)
+
+# Define the answer handler function for the second question
+def handle_q2_answer(update, context):
     answer = update.message.text.lower()
+
     if answer == "yes":
         context.user_data["e"] = 20
-        update.message.reply_text("Answer saved. Thank you.")
-        return ConversationHandler.END
     elif answer == "no":
         context.user_data["e"] = 0
-        update.message.reply_text("Answer saved. Thank you.")
-        return ConversationHandler.END
     else:
         update.message.reply_text("Invalid answer. Please enter 'Yes' or 'No'.")
         return "q2"
+
+    return handle_text(update, context)
+
+# Define the text handler function
+def handle_text(update, context):
+    e = context.user_data.get("e")
+
+    if e == 50:
+        update.message.reply_text("text1")
+    elif e == 20:
+        update.message.reply_text("text2")
+    else:
+        update.message.reply_text("text3")
+
+    return ConversationHandler.END
 
 # Define the cancel function
 def cancel(update, context):
     update.message.reply_text('Cancelled')
 
+    return ConversationHandler.END
+
+# Define the conversation handler
 conv_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)],
     states={
         "integer": [MessageHandler(Filters.text & ~Filters.command, handle_integer)],
-        "q1": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q1)],
-        "q2": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q2)]
+        "q1": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q1_answer)],
+        "q2": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q2_answer)],
     },
     fallbacks=[CommandHandler('cancel', cancel)]
 )
