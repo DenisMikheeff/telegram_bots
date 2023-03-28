@@ -11,7 +11,6 @@ def handle_message(update, context):
         int_s = int(text)
         context.user_data['s'] = int_s
         update.message.reply_text("Got it, your integer input is {}.".format(int_s))
-        return "handle_q1"
         if int_s >= 1:
             return "handle_q1"
         else:
