@@ -91,7 +91,6 @@ def main():
     dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
 
-    conv_handler = MessageHandler(Filters.text & ~Filters.command, handle_integer)
     dp.add_handler(conv_handler)
 
     dp.add_handler(MessageHandler(Filters.regex("(?i)yes|no"), handle_q1))
