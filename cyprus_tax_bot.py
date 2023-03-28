@@ -12,13 +12,13 @@ def start(update, context):
 def handle_integer(update, context):
     s = context.user_data.get('s')
     try:
-        if s >= 1:
+        if (int)s >= 1:
             return "q1"
         else:
             return "q2"
     except ValueError:
         update.message.reply_text("Invalid input. Please enter an integer.")
-        return "integer"
+        return "start"
 
 # Define the first question handler function
 def handle_q1(update, context):
