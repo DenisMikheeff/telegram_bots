@@ -7,19 +7,27 @@ def start(update, context):
     return "integer"
 
 def handle_integer(update, context):
+    state = context.user_data.get("state")
+    if state == "q1":
+        return handle_q1(update, context)
+    elif state == "q2":
+        return handle_q2(update, context)
     try:
         s = int(update.message.text)
         if s >= 1:
             context.user_data["q1"] = True
-            update.message.reply_text("Great! Here's your first question: ...")
             return "q1"
         else:
             context.user_data["q2"] = True
-            update.message.reply_text("Okay, let's move on to the next question: ...")
             return "q2"
     except ValueError:
         update.message.reply_text("Invalid input. Please enter an integer.")
-        return "integer"
+        if not state:
+            return "integer"
+        elif state == "q1":
+            return "q1"
+        elif state == "q2":
+            return "q2"
 
 def handle_q1(update, context):
     answer = update.message.text.lower()
