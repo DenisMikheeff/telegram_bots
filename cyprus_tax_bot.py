@@ -1,5 +1,6 @@
 import telegram
 import os
+import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 
 # Define the start function
@@ -13,6 +14,8 @@ def handle_integer(update, context):
     s = context.user_data.get('s')
     try:
         int_s = int(s)
+        logging.info(s)
+        logging.info(int_s)
         print(s)
         print(int_s)
         if int_s >= 1:
