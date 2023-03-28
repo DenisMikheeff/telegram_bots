@@ -47,6 +47,10 @@ def handle_q2(update, context):
         update.message.reply_text("Invalid answer. Please enter 'Yes' or 'No'.")
         return "q2"
 
+# Define the cancel function
+def cancel(update, context):
+    update.message.reply_text('Cancelled')
+
 conv_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)],
     states={
