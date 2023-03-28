@@ -1,71 +1,111 @@
 import telegram
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
+import os
+import logging
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
+# Define a function to handle incoming messages
+def handle_message(update, context):
+    text = update.message.text
+    try:
+        int_s = int(text)
+        context.user_data['s'] = int_s
+        update.message.reply_text("Got it, your integer input is {}.".format(int_s))
+        if int_s >= 1:
+            return "handle_q1"
+        else:
+            return "handle_q2"
+    except ValueError:
+        update.message.reply_text("Oops, please enter a valid integer.")
+        return "start"
 
 # Define a function to start the bot
 def start(update, context):
-    # Ask the user to enter an integer
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Please enter an integer:")
-    # Set the state to 'waiting_for_integer'
-    context.user_data['state'] = 'waiting_for_integer'
+    update.message.reply_text("Please enter an integer")
 
-# Define a function to handle user input
-def handle_input(update, context):
-    # Get the user input and store it in a variable 's'
-    s = update.message.text
-    # Convert 's' to an integer and store it in the user data
-    context.user_data['s'] = int(s)
-    # Check if s >= 1
-    if int(s) >= 1:
-        # Ask 'question 1' with 2 possible answers 'yes' and 'no' shown as clickable buttons
-        keyboard = [[InlineKeyboardButton("Yes", callback_data='q1_yes'),
-                     InlineKeyboardButton("No", callback_data='q1_no')]]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Question 1: Do you want to add 50 to the variable?", reply_markup=reply_markup)
-        # Set the state to 'waiting_for_q1_answer'
-        context.user_data['state'] = 'waiting_for_q1_answer'
+# Define the first question handler function
+def handle_q1(update, context):
+    update.message.reply_text("Question 1")
+    user_input = update.message.text.lower()
+    if user_input == "yes":
+        e = 50
+        return "handle_text"
+    elif user_input == "no":
+        e = 0
+        return "handle_text"
     else:
-        # Ask 'question 2' with 2 possible answers 'yes' and 'no' shown as clickable buttons
-        keyboard = [[InlineKeyboardButton("Yes", callback_data='q2_yes'),
-                     InlineKeyboardButton("No", callback_data='q2_no')]]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Question 2: Do you want to add 20 to the variable?", reply_markup=reply_markup)
-        # Set the state to 'waiting_for_q2_answer'
-        context.user_data['state'] = 'waiting_for_q2_answer'
+        update.message.reply_text("Invalid input. Please enter 'yes' or 'no'.")
+        return "handle_q1"
 
-# Define a function to handle button clicks
-def handle_button_click(update, context):
-    query = update.callback_query
-    # Get the value of the clicked button and store it in a variable 'answer'
-    answer = query.data
-    # Check the current state and update the user data accordingly
-    if context.user_data['state'] == 'waiting_for_q1_answer':
-        if answer == 'q1_yes':
-            context.user_data['e'] = 50
-        else:
-            context.user_data['e'] = 0
-    elif context.user_data['state'] == 'waiting_for_q2_answer':
-        if answer == 'q2_yes':
-            context.user_data['e'] = 20
-        else:
-            context.user_data['e'] = 0
-    # Check the value of 'e' and show the appropriate message
-    if context.user_data['e'] == 0:
-        context.bot.send_message(chat_id=query.message.chat_id, text="text1")
-    elif context.user_data['e'] == 20:
-        context.bot.send_message(chat_id=query.message.chat_id, text="text2")
+# Define the second question handler function
+def handle_q2(update, context):
+    update.message.reply_text("Question 2")
+    user_input = update.message.text.lower()
+    if user_input == "yes":
+        e = 20
+        return "handle_text"
+    elif user_input == "no":
+        e = 0
+        return "handle_text"
     else:
-        context.bot.send_message(chat_id=query.message.chat_id, text="text3")
+        update.message.reply_text("Invalid input. Please enter 'yes' or 'no'.")
+        return "handle_q2"
 
-# Create an Updater object and set up the handlers
-updater = Updater(token='5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE', use_context=True)
-dispatcher = updater.dispatcher
+# Define the text handler function
+def handle_text(update, context):
+    if e == 50:
+        update.message.reply_text("text1")
+    elif e == 20:
+        update.message.reply_text("text2")
+    else:
+        update.message.reply_text("text3")
 
-# Register the handlers
-dispatcher.add_handler(CommandHandler('start', start))
-dispatcher.add_handler(CallbackQueryHandler(handle_button_click))
-dispatcher.add_handler(MessageHandler(Filters.text, handle_input))
+    return ConversationHandler.END
 
-# Start the bot
-updater.start_polling()
-updater.idle()
+# Define the cancel function
+def cancel(update, context):
+    update.message.reply_text('Cancelled')
+
+    return ConversationHandler.END
+
+# Define the conversation handler
+conv_handler = ConversationHandler(
+    entry_points=[CommandHandler('start', start)],
+    states={
+        "q1": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q1)],
+        "q2": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q2)],
+    },
+    fallbacks=[CommandHandler('cancel', cancel)]
+)
+
+def main():
+    TOKEN = "5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE"
+    PORT = int(os.environ.get("PORT", 8443))
+    APP_NAME = "cyprus-tax-bot"
+
+    updater = Updater(token='5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE', use_context=True)
+    dispatcher = updater.dispatcher
+
+    dp = updater.dispatcher
+
+    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+
+    dp.add_handler(conv_handler)
+
+    dp.add_handler(MessageHandler(Filters.regex("(?i)yes|no"), handle_q1))
+    dp.add_handler(MessageHandler(Filters.regex("(?i)yes|no"), handle_q2))
+    
+    updater.start_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        url_path=TOKEN,
+        webhook_url=f"https://cyprus-tax-bot.herokuapp.com/5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE"
+    )
+
+    updater.start_polling()
+    logging.info('Bot started')
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
