@@ -15,7 +15,6 @@ def start(update, context):
 # Define the integer handler function
 def handle_integer(update, context):
     try:
-        int_s = int(s)
         if int_s >= 1:
             return "q1"
         else:
