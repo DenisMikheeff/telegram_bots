@@ -1,21 +1,21 @@
 import telegram
 import os
-import logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 
 # Define the start function
 def start(update, context):
     update.message.reply_text("Please enter an integer")
-    context.user_data['s'] = update.message.text
-    return "integer"
+    try:
+        int_s = int(update.message.text)
+        context.user_data['s'] = int_s
+        update.message.reply_text("Got it, your integer input is {}.".format(int_s))
+    except ValueError:
+        update.message.reply_text("Oops, please enter a valid integer.")
 
 # Define the integer handler function
 def handle_integer(update, context):
-    s = context.user_data.get('s')
     try:
         int_s = int(s)
-        logging.info(f's = {s}, int_s = {int_s}')
         if int_s >= 1:
             return "q1"
         else:
