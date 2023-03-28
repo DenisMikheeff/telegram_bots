@@ -1,6 +1,7 @@
 import telegram
 import os
 import logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 
 # Define the start function
@@ -14,10 +15,7 @@ def handle_integer(update, context):
     s = context.user_data.get('s')
     try:
         int_s = int(s)
-        logging.info(s)
-        logging.info(int_s)
-        print(s)
-        print(int_s)
+        logging.info(f's = {s}, int_s = {int_s}')
         if int_s >= 1:
             return "q1"
         else:
