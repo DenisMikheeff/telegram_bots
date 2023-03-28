@@ -12,36 +12,20 @@ def handle_message(update, context):
         context.user_data['s'] = int_s
         update.message.reply_text("Got it, your integer input is {}.".format(int_s))
         if int_s >= 1:
-            update.message.reply_text("Question 1: What is your favorite color?")
             return "q1"
         else:
-            update.message.reply_text("Question 2: What is your favorite animal?")
             return "q2"
     except ValueError:
         update.message.reply_text("Oops, please enter a valid integer.")
-        return "start"
+        return start
 
 # Define a function to start the bot
 def start(update, context):
     update.message.reply_text("Please enter an integer")
 
-# Define the integer handler function
-def handle_integer(update, context):
-    try:
-        int_s = int(update.message.text)
-        context.user_data['s'] = int_s
-        if int_s >= 1:
-            update.message.reply_text("Question 1: What is your favorite color?")
-            return "q1"
-        else:
-            update.message.reply_text("Question 2: What is your favorite animal?")
-            return "q2"
-    except ValueError:
-        update.message.reply_text("Invalid input. Please enter an integer.")
-        return "start"
-
 # Define the first question handler function
 def handle_q1(update, context):
+    update.message.reply_text("Question 1")
     user_input = update.message.text.lower()
     if user_input == "yes":
         e = 50
@@ -51,10 +35,11 @@ def handle_q1(update, context):
         return "handle_text"
     else:
         update.message.reply_text("Invalid input. Please enter 'yes' or 'no'.")
-        return "q1"
+        return handle_q1
 
 # Define the second question handler function
 def handle_q2(update, context):
+    update.message.reply_text("Question 2")
     user_input = update.message.text.lower()
     if user_input == "yes":
         e = 20
@@ -64,7 +49,7 @@ def handle_q2(update, context):
         return "handle_text"
     else:
         update.message.reply_text("Invalid input. Please enter 'yes' or 'no'.")
-        return "q2"
+        return handle_q2
 
 # Define the text handler function
 def handle_text(update, context):
