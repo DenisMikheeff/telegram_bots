@@ -52,7 +52,7 @@ dispatcher.add_handler(MessageHandler(Filters.text, handle_input))
 updater.start_polling()
 updater.idle()
 
-     elif context.user_data['state'] == 'waiting_for_q2_answer':
+elif context.user_data['state'] == 'waiting_for_q2_answer':
         if answer == 'q2_yes':
             context.user_data['e'] = 20
         else:
