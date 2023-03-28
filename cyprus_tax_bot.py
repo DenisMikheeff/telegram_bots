@@ -5,67 +5,48 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Conve
 # Define the start function
 def start(update, context):
     update.message.reply_text("Please enter an integer")
-
     return "integer"
 
 # Define the integer handler function
 def handle_integer(update, context):
     try:
         s = int(update.message.text)
-        context.user_data["s"] = s
-
         if s >= 1:
-            return handle_q1(update, context)
+            return "q1"
         else:
-            return handle_q2(update, context)
+            return "q2"
     except ValueError:
         update.message.reply_text("Invalid input. Please enter an integer.")
         return "integer"
 
 # Define the first question handler function
 def handle_q1(update, context):
-    update.message.reply_text("Great! Here's your first question: [Yes/No] ...")
-
-    return "q1"
+    user_input = update.message.text.lower()
+    if user_input == "yes":
+        e = 50
+        return "handle_text"
+    elif user_input == "no":
+        e = 0
+        return "handle_text"
+    else:
+        update.message.reply_text("Invalid input. Please enter 'yes' or 'no'.")
+        return "q1"
 
 # Define the second question handler function
 def handle_q2(update, context):
-    update.message.reply_text("Okay, let's move on to the next question: [Yes/No] ...")
-
-    return "q2"
-
-# Define the answer handler function for the first question
-def handle_q1_answer(update, context):
-    answer = update.message.text.lower()
-
-    if answer == "yes":
-        context.user_data["e"] = 50
-    elif answer == "no":
-        context.user_data["e"] = 0
+    user_input = update.message.text.lower()
+    if user_input == "yes":
+        e = 20
+        return "handle_text"
+    elif user_input == "no":
+        e = 0
+        return "handle_text"
     else:
-        update.message.reply_text("Invalid answer. Please enter 'Yes' or 'No'.")
-        return "q1"
-
-    return handle_text(update, context)
-
-# Define the answer handler function for the second question
-def handle_q2_answer(update, context):
-    answer = update.message.text.lower()
-
-    if answer == "yes":
-        context.user_data["e"] = 20
-    elif answer == "no":
-        context.user_data["e"] = 0
-    else:
-        update.message.reply_text("Invalid answer. Please enter 'Yes' or 'No'.")
+        update.message.reply_text("Invalid input. Please enter 'yes' or 'no'.")
         return "q2"
-
-    return handle_text(update, context)
 
 # Define the text handler function
 def handle_text(update, context):
-    e = context.user_data.get("e")
-
     if e == 50:
         update.message.reply_text("text1")
     elif e == 20:
@@ -86,8 +67,8 @@ conv_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)],
     states={
         "integer": [MessageHandler(Filters.text & ~Filters.command, handle_integer)],
-        "q1": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q1_answer)],
-        "q2": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q2_answer)],
+        "q1": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q1)],
+        "q2": [MessageHandler(Filters.regex('^(yes|no)$') & ~Filters.command, handle_q2)],
     },
     fallbacks=[CommandHandler('cancel', cancel)]
 )
