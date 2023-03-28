@@ -57,8 +57,12 @@ def handle_q2(update, context):
         update.message.reply_text("text3")
 
 def main():
+    TOKEN = "5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE"
     PORT = int(os.environ.get("PORT", 8443))
-    updater = Updater("5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE", use_context=True)
+    APP_NAME = "cyprus-tax-bot"
+
+    updater = Updater(TOKEN, use_context=True)
+
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
@@ -69,9 +73,13 @@ def main():
     dp.add_handler(MessageHandler(Filters.regex("(?i)yes|no"), handle_q1))
     dp.add_handler(MessageHandler(Filters.regex("(?i)yes|no"), handle_q2))
 
-    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path="5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE")
-    updater.bot.set_webhook("https://cyprus-tax-bot.herokuapp.com/5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE")
-    updater.start_polling()
+    updater.start_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        url_path=TOKEN,
+        webhook_url=f"https://cyprus-tax-bot.herokuapp.com/5486890272:AAEPDRADV5rVOLk7vRvRouXIi7Hkcc5V8RE"
+    )
+
     updater.idle()
 
 if __name__ == '__main__':
