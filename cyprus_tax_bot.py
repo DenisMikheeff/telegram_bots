@@ -13,6 +13,7 @@ def handle_message(update, context):
         update.message.reply_text("Got it, your integer input is {}.".format(int_s))
     except ValueError:
         update.message.reply_text("Oops, please enter a valid integer.")
+        return "integer"
 
 # Define a function to start the bot
 def start(update, context):
