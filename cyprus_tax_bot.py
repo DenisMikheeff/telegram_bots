@@ -11,9 +11,11 @@ def handle_integer(update, context):
         s = int(update.message.text)
         if s >= 1:
             context.user_data["q1"] = True
+            update.message.reply_text("Great! Here's your first question: ...")
             return "q1"
         else:
             context.user_data["q2"] = True
+            update.message.reply_text("Okay, let's move on to the next question: ...")
             return "q2"
     except ValueError:
         update.message.reply_text("Invalid input. Please enter an integer.")
