@@ -12,12 +12,12 @@ def handle_message(update, context):
         context.user_data['s'] = int_s
         update.message.reply_text("Got it, your integer input is {}.".format(int_s))
         if int_s >= 1:
-            return "q1"
+            return "handle_q1"
         else:
-            return "q2"
+            return "handle_q2"
     except ValueError:
         update.message.reply_text("Oops, please enter a valid integer.")
-        return start
+        return "start"
 
 # Define a function to start the bot
 def start(update, context):
@@ -35,7 +35,7 @@ def handle_q1(update, context):
         return "handle_text"
     else:
         update.message.reply_text("Invalid input. Please enter 'yes' or 'no'.")
-        return handle_q1
+        return "handle_q1"
 
 # Define the second question handler function
 def handle_q2(update, context):
@@ -49,7 +49,7 @@ def handle_q2(update, context):
         return "handle_text"
     else:
         update.message.reply_text("Invalid input. Please enter 'yes' or 'no'.")
-        return handle_q2
+        return "handle_q2"
 
 # Define the text handler function
 def handle_text(update, context):
